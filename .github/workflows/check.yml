@@ -14,16 +14,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - model: "SM-T720"
+          - model: "SM-T505"
             region: "BTU"
-          - model: "SM-T725"
-            region: "BTU"
-          - model: "SM-T725C"
+          - model: "SM-T505C"
             region: "CHC"
-          - model: "SM-T725N"
+          - model: "SM-T505N"
             region: "KOO"
-          - model: "SM-T727"
-            region: "TUR"
 
     steps:
     - name: Checkout repo
@@ -53,11 +49,11 @@ jobs:
 
     - name: Install dependencies
       if: steps.check.outputs.need_update == 1
-      run: sudo npm i -g samfirm
+      run: npm i github:chrmhoffmann/samfirm.js
 
     - name: Fetch firmware
       if: steps.check.outputs.need_update == 1
-      run: samfirm -m ${{ matrix.model }} -r ${{ matrix.region }}
+      run: ./node_modules/.bin/samfirm -m ${{ matrix.model }} -r ${{ matrix.region }}
 
     - name: Get path of files
       if: steps.check.outputs.need_update == 1
@@ -70,15 +66,12 @@ jobs:
     - name: Check contents of downloaded firmware
       if: steps.check.outputs.need_update == 1
       run: |
-       tar tvf ${{ steps.files.outputs.ap }}
        tar tvf ${{ steps.files.outputs.bl }}
        tar tvf ${{ steps.files.outputs.cp }} || true
 
     - name: Remove unwanted files from AP and BL
       if: steps.check.outputs.need_update == 1
       run: |
-       tar vf ${{ steps.files.outputs.ap }} --delete boot.img.lz4 recovery.img.lz4 system.img.ext4.lz4 dtbo.img.lz4 vendor.img.ext4.lz4 persist.img.ext4.lz4 userdata.img.ext4.lz4 vbmeta.img.lz4 meta-data
-       md5sum ${{ steps.files.outputs.ap }} | sed "s/  .*\//  /;s/\.md5$//" >> ${{ steps.files.outputs.ap }}
        tar vf ${{ steps.files.outputs.bl }} --delete vbmeta.img.lz4
        md5sum ${{ steps.files.outputs.bl }} | sed "s/  .*\//  /;s/\.md5$//" >> ${{ steps.files.outputs.bl }}
 
@@ -108,6 +101,5 @@ jobs:
       with:
        tag_name: ${{ steps.check.outputs.latest_shortversion }}
        files: |
-        ${{ steps.files.outputs.ap }}
         ${{ steps.files.outputs.bl }}
         ${{ steps.files.outputs.cp }}
