@@ -22,7 +22,8 @@ jobs:
             region: "CHC"
           - model: "SM-T505N"
             region: "KOO"
-
+          - model: "SM-T507"
+            region: "TUR"
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
