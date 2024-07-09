@@ -14,16 +14,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - model: "SM-T500"
-            region: "EUX"
-          - model: "SM-T505"
-            region: "BTU"
-          - model: "SM-T505C"
-            region: "CHC"
-          - model: "SM-T505N"
-            region: "KOO"
-          - model: "SM-T507"
-            region: "TUR"
+          - model: "SM-A137F"
+            region: "EGY"
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
